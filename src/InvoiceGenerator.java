@@ -4,19 +4,16 @@ public class InvoiceGenerator {
     private static final int COST_PER_TIME = 1;
     private static final int MINIMUM_FARE = 5;
 
+    private RideRepository rideRepository;
+
     public double calculateFare(double distance, int time) {
         double fare = distance * MINIMUM_COST_PER_KILOMETER + time * COST_PER_TIME;
-        /*
-        Checking if min fare less than 5 should give minimum 5 fare
-         */
+
         if (fare < MINIMUM_FARE)
             return MINIMUM_FARE;
         return fare;
     }
 
-    /*
-   Method to Calculate Fare for Multiple Rides
-    */
     public double calculateFare(Ride[] rides) {
         double totalFare = 0;
         for (Ride ride : rides) {
@@ -31,5 +28,20 @@ public class InvoiceGenerator {
             totalFare += this.calculateFare(ride.distance, ride.time);
         }
         return new InvoiceSummary(rides.length, totalFare);
+    }
+
+    public InvoiceGenerator() {
+        this.rideRepository = new RideRepository();
+    }
+
+    public void addRides(String userId, Ride[] ride) {
+        rideRepository.addRide(userId, ride);
+    }
+
+    // returning in voice summary
+
+    public double getInvoiceSummary(String userId) {
+        return this.calculateFare(rideRepository.getRides(userId));
+
     }
 }
